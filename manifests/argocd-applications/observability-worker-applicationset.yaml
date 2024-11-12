@@ -24,8 +24,8 @@ spec:
         path: manifests/observability-worker/k8s
         # repoURL: https://github.com/kuadrant/deployment
         # targetRevision: HEAD
-        repoURL: https://github.com/david-martin/deployment
-        targetRevision: observability
+        repoURL: https://github.com/roivaz/kuadrant-deployment
+        targetRevision: ha-setup
         kustomize:
           patches:
             - target:

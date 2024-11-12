@@ -4,5 +4,4 @@ namespace: kuadrant-system
 resources:
   - namespace.yaml
   - operator.yaml
-  - redis.yaml
   - kuadrant.yaml

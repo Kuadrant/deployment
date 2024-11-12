@@ -5,3 +5,112 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec: {}
+
+---
+# [NOTE] This is a partial Limitador resource. The expected behavior is that
+# argocd patches the kuadrant-owned Limitador instance, adding these fields
+# but without touching naything else.
+apiVersion: limitador.kuadrant.io/v1alpha1
+kind: Limitador
+metadata:
+  name: limitador
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  pdb:
+    maxUnavailable: 1
+  replicas: 2
+  # [NOTE] values set to minimize resource consumption on a local env
+  resourceRequirements:
+    requests:
+      cpu: 10m
+      memory: 10Mi
+  storage:
+    redis-cached:
+      configSecretRef:
+        name: redis-config
+
+---
+# [NOTE] This is a partial limitador Deployment resource. The purpose is that argocd
+# patches (merge) the limitador-operator owned Deployment with this partial resource
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: limitador-limitador
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  template:
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              limitador-resource: limitador
+        - maxSkew: 1
+          topologyKey: kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              limitador-resource: limitador
+
+---
+# [NOTE] This is a partial Authorino resource. The purpose is that argocd
+# patches (merge) the kuadrant-operator owned Authorino with this partial resource
+apiVersion: operator.authorino.kuadrant.io/v1beta1
+kind: Authorino
+metadata:
+  name: authorino
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  replicas: 2
+
+---
+# [NOTE] This is a partial authorino Deployment resource. The purpose is that argocd
+# patches (merge) the authorino-operator owned Deployment with this partial resource
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authorino
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  template:
+    spec:
+      containers:
+        - name: authorino
+          # [NOTE] values set to minimize resource consumption on a local env
+          resources:
+            requests:
+              cpu: 10m
+              memory: 10Mi
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              authorino-resource: authorino
+        - maxSkew: 1
+          topologyKey: kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              authorino-resource: authorino
+
+---
+# [NOTE]: Authorino resource does not have support for PDB, but we can create one and target authorino Pods
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: authorino
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      authorino-resource: authorino
