@@ -32,6 +32,14 @@ spec:
         name: redis-config
 
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redis-config
+stringData:
+  URL: redis://redis-master.redis.svc.cluster.local:6379
+
+---
 # [NOTE] This is a partial limitador Deployment resource. The purpose is that argocd
 # patches (merge) the limitador-operator owned Deployment with this partial resource
 apiVersion: apps/v1
