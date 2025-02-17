@@ -17,34 +17,21 @@ resources:
 - ./thanos/manifests/thanos-ruler-service.yaml
 - ./thanos/manifests/thanos-ruler-serviceAccount.yaml
 - ./thanos/manifests/thanos-ruler-statefulset.yaml
-- grafana.yaml
-
-# Patch grafana deployment to include dashboard configmaps
-generatorOptions:
-  disableNameSuffixHash: true
+- ./grafana/subscription.yaml
+- ./grafana/grafana.yaml
+- ./grafana/datasource.yaml
+- ./grafana/dashboards.yaml
 
 configMapGenerator:
 - files:
   - ./grafana/dashboards/grafana-dashboard-istio-workload.json
-  name: grafana-istio-workload
+  name: istio-workload
   namespace: monitoring
-
-secretGenerator:
-- behavior: replace
-  files:
-  - ./grafana/datasources.yaml
-  name: grafana-datasources
-  namespace: monitoring
+  options:
+      disableNameSuffixHash: true
 
 patches:
-- path: ./grafana/grafana-deployment-patch.yaml
-  target:
-    group: apps
-    kind: Deployment
-    name: grafana
-    version: v1
 - target:
     kind: Service
     name: thanos-receive-router
   path: ./thanos/manifests/thanos-receive-router-skupper-patch.yaml
-
