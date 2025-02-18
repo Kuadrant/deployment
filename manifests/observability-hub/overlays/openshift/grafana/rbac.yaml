@@ -1,8 +1,8 @@
+### thanos rbac
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: thanos-query
-  namespace: monitoring
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -25,3 +25,50 @@ metadata:
     # this will generate a long-lived token for the service account in the annotation
     kubernetes.io/service-account.name: thanos-query
 type: kubernetes.io/service-account-token
+
+### proxy rbac
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    config.openshift.io/inject-trusted-cabundle: "true"
+  name: ocp-injected-certs
+---
+apiVersion: v1
+data:
+  session_secret: Y2hhbmdlIG1lCg==
+kind: Secret
+metadata:
+  name: grafana-proxy
+type: Opaque
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: grafana-proxy
+rules:
+  - verbs:
+      - create
+    apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
+  - verbs:
+      - create
+    apiGroups:
+      - authorization.k8s.io
+    resources:
+      - subjectaccessreviews
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: grafana-proxy
+roleRef:
+  kind: ClusterRole
+  name: grafana-proxy
+subjects:
+  - kind: ServiceAccount
+    name: grafana-sa
+    namespace: monitoring

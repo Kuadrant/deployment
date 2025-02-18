@@ -22,7 +22,6 @@ spec:
       admin_user: root
   service:
     spec:
-      type: LoadBalancer
       ports:
         - name: https
           port: 9091
