@@ -111,7 +111,7 @@ GRAFANA_IP = $(shell kubectl --kubeconfig=$(PWD)/kubeconfig -n monitoring get sv
 grafana-url:
 	@echo -e "\n"
 	@echo -e ">>> Grafana is available at:"
-	@echo -e ">>> \tURL: \thttp://$(GRAFANA_IP):3000/login"
+	@echo -e ">>> \tURL: \thttp://$(GRAFANA_IP)/login"
 	@echo -e ">>> \tuser: \t$(GRAFANA_USER)"
 	@echo -e ">>> \tpass: \t$(GRAFANA_PASSWD)"
 	@echo -e "\n"
