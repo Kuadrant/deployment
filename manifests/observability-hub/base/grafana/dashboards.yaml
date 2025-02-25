@@ -1,0 +1,84 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: istio-workload
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  configMapRef:
+    name: istio-workload
+    key: grafana-dashboard-istio-workload.json
+
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: app-developer
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  url: "https://raw.githubusercontent.com/Kuadrant/kuadrant-operator/refs/tags/v1.0.2/examples/dashboards/app_developer.json"
+
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: platform-engineer
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  url: "https://raw.githubusercontent.com/Kuadrant/kuadrant-operator/refs/tags/v1.0.2/examples/dashboards/platform_engineer.json"
+
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: bussiness-user
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  url: "https://raw.githubusercontent.com/Kuadrant/kuadrant-operator/refs/tags/v1.0.2/examples/dashboards/business_user.json"
+
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: controller-resources-metrics
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  url: "https://raw.githubusercontent.com/Kuadrant/kuadrant-operator/refs/tags/v1.0.2/examples/dashboards/controller-resources-metrics.json"
+
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: controller-runtime-metrics
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  url: "https://raw.githubusercontent.com/Kuadrant/kuadrant-operator/refs/tags/v1.0.2/examples/dashboards/controller-runtime-metrics.json"

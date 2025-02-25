@@ -1,0 +1,9 @@
+- op: replace
+  path: /metadata/namespace
+  value: openshift-operators
+- op: replace
+  path: /spec/source
+  value: community-operators
+- op: replace
+  path: /spec/sourceNamespace
+  value: openshift-marketplace
