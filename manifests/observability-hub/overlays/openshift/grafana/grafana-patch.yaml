@@ -80,6 +80,6 @@ spec:
     spec:
       ports:
         - name: https
-          port: 9091
+          port: 443
           protocol: TCP
           targetPort: https
