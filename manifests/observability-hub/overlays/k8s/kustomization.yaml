@@ -2,49 +2,26 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../base
-- ./thanos/manifests/thanos-query-deployment.yaml
-- ./thanos/manifests/thanos-query-service.yaml
-- ./thanos/manifests/thanos-query-serviceAccount.yaml
-- ./thanos/manifests/thanos-receive-ingestor-default-service.yaml
-- ./thanos/manifests/thanos-receive-ingestor-default-statefulSet.yaml
-- ./thanos/manifests/thanos-receive-ingestor-serviceAccount.yaml
-- ./thanos/manifests/thanos-receive-router-configmap.yaml
-- ./thanos/manifests/thanos-receive-router-deployment.yaml
-- ./thanos/manifests/thanos-receive-router-service.yaml
-- ./thanos/manifests/thanos-receive-router-serviceAccount.yaml
-- ./thanos/manifests/thanos-receive-auth-secret-config.yaml
-- ./thanos/manifests/thanos-ruler-service.yaml
-- ./thanos/manifests/thanos-ruler-serviceAccount.yaml
-- ./thanos/manifests/thanos-ruler-statefulset.yaml
-- grafana.yaml
-
-# Patch grafana deployment to include dashboard configmaps
-generatorOptions:
-  disableNameSuffixHash: true
-
-configMapGenerator:
-- files:
-  - ./grafana/dashboards/grafana-dashboard-istio-workload.json
-  name: grafana-istio-workload
-  namespace: monitoring
-
-secretGenerator:
-- behavior: replace
-  files:
-  - ./grafana/datasources.yaml
-  name: grafana-datasources
-  namespace: monitoring
+  - ../../base
+  - ./thanos/manifests/thanos-query-deployment.yaml
+  - ./thanos/manifests/thanos-query-service.yaml
+  - ./thanos/manifests/thanos-query-serviceAccount.yaml
+  - ./thanos/manifests/thanos-receive-ingestor-default-service.yaml
+  - ./thanos/manifests/thanos-receive-ingestor-default-statefulSet.yaml
+  - ./thanos/manifests/thanos-receive-ingestor-serviceAccount.yaml
+  - ./thanos/manifests/thanos-receive-router-configmap.yaml
+  - ./thanos/manifests/thanos-receive-router-deployment.yaml
+  - ./thanos/manifests/thanos-receive-router-service.yaml
+  - ./thanos/manifests/thanos-receive-router-serviceAccount.yaml
+  - ./thanos/manifests/thanos-receive-auth-secret-config.yaml
+  - ./thanos/manifests/thanos-ruler-service.yaml
+  - ./thanos/manifests/thanos-ruler-serviceAccount.yaml
+  - ./thanos/manifests/thanos-ruler-statefulset.yaml
+  - ./grafana/datasource.yaml
 
 patches:
-- path: ./grafana/grafana-deployment-patch.yaml
-  target:
-    group: apps
-    kind: Deployment
-    name: grafana
-    version: v1
-- target:
-    kind: Service
-    name: thanos-receive-router
-  path: ./thanos/manifests/thanos-receive-router-skupper-patch.yaml
-
+  - target:
+      kind: Service
+      name: thanos-receive-router
+    path: ./thanos/manifests/thanos-receive-router-skupper-patch.yaml
+  - path: grafana/grafana-patch.yaml

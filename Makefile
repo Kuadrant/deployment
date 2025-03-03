@@ -103,6 +103,19 @@ argocd-url:
 argocd-login: argocd
 	$(ARGOCD) login $(ARGOCD_IP):443 --insecure --username admin --password $(ARGOCD_PASSWD)
 
+##@ Grafana management targets
+GRAFANA_USER = $(shell kubectl --kubeconfig=$(PWD)/kubeconfig -n monitoring get secret grafana-admin-credentials -o jsonpath="{.data.GF_SECURITY_ADMIN_USER}" | base64 -d)
+GRAFANA_PASSWD = $(shell kubectl --kubeconfig=$(PWD)/kubeconfig -n monitoring get secret grafana-admin-credentials -o jsonpath="{.data.GF_SECURITY_ADMIN_PASSWORD}" | base64 -d)
+GRAFANA_IP = $(shell kubectl --kubeconfig=$(PWD)/kubeconfig -n monitoring get svc grafana-service -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+
+grafana-url:
+	@echo -e "\n"
+	@echo -e ">>> Grafana is available at:"
+	@echo -e ">>> \tURL: \thttp://$(GRAFANA_IP)/login"
+	@echo -e ">>> \tuser: \t$(GRAFANA_USER)"
+	@echo -e ">>> \tpass: \t$(GRAFANA_PASSWD)"
+	@echo -e "\n"
+
 ##@ Local setup
 
 local-setup: export KUBECONFIG = $(PWD)/kubeconfig

@@ -1,31 +1,14 @@
----
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-  labels:
-    dashboards: grafana
   name: grafana
 spec:
   config:
-    auth.anonymous:
-      enabled: "True"
-    auth:
-      disable_login_form: "False"
-      disable_signout_menu: "True"
-    auth.basic:
-      enabled: "True"
     auth.proxy:
       enabled: "True"
       enable_login_token: "True"
       header_property: "username"
       header_name: "X-Forwarded-User"
-    log:
-      mode: console
-    security:
-      admin_password: secret
-      admin_user: root
   serviceAccount:
     metadata:
       annotations:
@@ -97,56 +80,6 @@ spec:
     spec:
       ports:
         - name: https
-          port: 9091
+          port: 443
           protocol: TCP
           targetPort: https
-  client:
-    preferIngress: false
-  version: 10.4.3
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  labels:
-    config.openshift.io/inject-trusted-cabundle: "true"
-  name: ocp-injected-certs
-  namespace: grafana
----
-apiVersion: v1
-data:
-  session_secret: Y2hhbmdlIG1lCg==
-kind: Secret
-metadata:
-  name: grafana-proxy
-  namespace: grafana
-type: Opaque
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: grafana-proxy
-rules:
-  - verbs:
-      - create
-    apiGroups:
-      - authentication.k8s.io
-    resources:
-      - tokenreviews
-  - verbs:
-      - create
-    apiGroups:
-      - authorization.k8s.io
-    resources:
-      - subjectaccessreviews
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: grafana-proxy
-roleRef:
-  kind: ClusterRole
-  name: grafana-proxy
-subjects:
-  - kind: ServiceAccount
-    name: grafana-sa
-    namespace: monitoring

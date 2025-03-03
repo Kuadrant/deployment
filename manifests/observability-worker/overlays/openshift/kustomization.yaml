@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../base
-  # Install an instance of kube-state-metrics specificly for gateway & kaudrant metrics
+  - cluster-monitoring-config.yaml
+  # Install an instance of kube-state-metrics specifically for gateway & kuadrant metrics
   - kube-state-metrics.yaml
 

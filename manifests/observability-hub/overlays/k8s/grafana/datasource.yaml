@@ -1,0 +1,19 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  name: kuadrant-thanos-hub
+spec:
+  datasource:
+    access: proxy
+    isDefault: true
+    jsonData:
+      manageAlerts: false
+      tlsSkipVerify: false
+    name: kuadrant-thanos-hub
+    type: prometheus
+    url: 'http://thanos-query.monitoring.svc:9090'
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
